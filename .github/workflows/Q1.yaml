@@ -1,4 +1,4 @@
-name: Copie README a Q1_archive_README
+name: Copier README dans Q1_archive_README
 
 on:
   push:
@@ -9,20 +9,23 @@ jobs:
   copy-readme:
     runs-on: ubuntu-latest
     permissions:
-      contents: write  # Autorise le workflow à écrire dans le dépôt
+      contents: write  # Autorise l'écriture dans le dépôt
     steps:
-      - name: Checkout repository
+      - name: Récupérer le dépôt
         uses: actions/checkout@v3
 
-      - name: Copy README.md to Q1_archive_README.md
+      - name: Copier README.md vers Q1_archive_README.md
         run: cp README.md Q1_archive_README.md
 
-      - name: Commit and push changes
+      - name: Récupérer les dernières modifications du dépôt distant
+        run: git pull origin HEAD
+
+      - name: Ajouter et pousser les changements
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           git config --global user.name "GitHub Actions"
           git config --global user.email "actions@github.com"
           git add Q1_archive_README.md
-          git commit -m "Add Q1_archive_README.md"
+          git commit -m "Ajout de Q1_archive_README.md"
           git push origin HEAD
