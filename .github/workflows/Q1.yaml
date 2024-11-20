@@ -1,4 +1,4 @@
-name: Copie README to Q1_archive_README
+name: Copie README a Q1_archive_README
 
 on:
   push:
@@ -8,17 +8,21 @@ on:
 jobs:
   copy-readme:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write  # Autorise le workflow à écrire dans le dépôt
     steps:
       - name: Checkout repository
-        uses: actions/checkout
+        uses: actions/checkout@v3
 
       - name: Copy README.md to Q1_archive_README.md
         run: cp README.md Q1_archive_README.md
 
       - name: Commit and push changes
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           git config --global user.name "GitHub Actions"
           git config --global user.email "actions@github.com"
           git add Q1_archive_README.md
           git commit -m "Add Q1_archive_README.md"
-          git push
+          git push origin HEAD
