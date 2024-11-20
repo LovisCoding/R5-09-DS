@@ -1,7 +1,7 @@
 public class Q6 {
     public static void main(String[] args) {
         if (args.length == 0) {
-            System.out.println("Erreur : Veuillez fournir un nombre entier comme paramètre.");
+            System.out.println("Erreur : Veuillez fournir un entier comme paramètre.");
             return;
         }
 
