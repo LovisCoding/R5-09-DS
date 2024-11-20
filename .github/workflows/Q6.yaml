@@ -1,0 +1,45 @@
+name: Archive Q6.java avec Date et différences
+
+on:
+  push:
+    paths:
+      - Q6.java  # Le workflow se déclenche uniquement si Q6.java est modifié ou ajouté
+
+jobs:
+  archive-q6:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write  # Autorise l'écriture dans le dépôt
+    steps:
+      - name: Récupérer le dépôt
+        uses: actions/checkout@v3
+
+      - name: Créer un fichier Q6_archive_date.txt avec la date et des informations
+        run: |
+          DATE=$(date '+%d-%m-%Y-%H%M%S')  # Date au format JJ-MM-AAAA-HHMMSS
+          FILENAME="Q6_archive_${DATE}.txt"
+          echo "Nom et Prénom : LECOMTE Arthur" > $FILENAME
+          echo "" >> $FILENAME
+          cat Q6.java >> $FILENAME
+          echo "" >> $FILENAME
+          echo "Taille (nombre de caractères) : $(wc -c < Q6.java)" >> $FILENAME
+          echo "Nombre de lignes : $(wc -l < Q6.java)" >> $FILENAME
+
+      - name: Comparer avec le dernier fichier Q6_archive
+        run: |
+          LATEST_FILE=$(ls -t Q6_archive_*.txt | head -n 2 | tail -n 1)  # Deuxième dernier fichier
+          if [ -f "$LATEST_FILE" ]; then
+            diff "$LATEST_FILE" "Q6_archive_${DATE}.txt" > Q6_différences.txt || true
+          else
+            echo "Aucune comparaison possible : aucun fichier précédent trouvé." > Q6_différences.txt
+          fi
+
+      - name: Ajouter et pousser les fichiers
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "actions@github.com"
+          git add Q6_archive_*.txt Q6_différences.txt
+          git commit -m "Ajout de Q6_archive_DATE et Q6_différences.txt avec nom et infos"
+          git push origin HEAD
