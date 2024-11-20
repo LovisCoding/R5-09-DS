@@ -1,0 +1,33 @@
+name: Archive Q5.java with Date in Filename
+
+on:
+  push:
+    paths:
+      - Q5.java  # Le workflow se déclenche uniquement si le fichier Q5.java est modifié ou ajouté
+
+jobs:
+  archive-q5:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write  # Autorise l'écriture dans le dépôt
+    steps:
+      - name: Récupérer le dépôt
+        uses: actions/checkout@v3
+
+      - name: Créer un fichier Q5_archive_date.txt avec la date
+        run: |
+          DATE=$(date '+%d-%m-%Y')  # Obtenir la date au format JJ-MM-AAAA
+          FILENAME="Q5_archive_${DATE}.txt"
+          echo "Nom et Prénom : Arthur LECOMTE" > $FILENAME
+          echo "" >> $FILENAME
+          cat Q5.java >> $FILENAME
+
+      - name: Ajouter et pousser les changements
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "actions@github.com"
+          git add Q5_archive_*.txt
+          git commit -m "Ajout de Q5_archive_DATE avec Q5.java et nom"
+          git push origin HEAD
