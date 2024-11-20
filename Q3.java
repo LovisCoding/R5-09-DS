@@ -8,7 +8,7 @@ public class Q3 {
                 }
                 System.out.println(); // Saut de ligne après les étoiles
             } catch (NumberFormatException e) {
-                System.out.println("Fournissez un entier valide en paramètre.");
+                System.out.println("Veuillez fournir un entier valide en paramètre.");
             }
         } else {
             System.out.println("Veuillez fournir un paramètre pour le nombre d'étoiles.");
