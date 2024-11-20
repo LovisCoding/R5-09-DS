@@ -1,0 +1,32 @@
+name: Ajout Nom, Date, et contenu du README à l'archive
+
+on:
+  push:
+    paths:
+      - README.md  # Le workflow se déclenche lorsqu'un changement est effectué sur README.md
+
+jobs:
+  generate-archive:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write  # Autorise l'écriture dans le dépôt
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Create Q2_archive_README.md
+        run: |
+          echo "Nom et Prénom : LECOMTE Arthur" > Q2_archive_README.md
+          echo "Date et heure : $(date '+%Y-%m-%d %H:%M:%S')" >> Q2_archive_README.md
+          echo "" >> Q2_archive_README.md
+          cat README.md >> Q2_archive_README.md
+
+      - name: Commit and push changes
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "actions@github.com"
+          git add Q2_archive_README.md
+          git commit -m "Ajout Q2_archive_README.md avec nom, date, et contenu du README"
+          git push origin HEAD
