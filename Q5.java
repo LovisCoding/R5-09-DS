@@ -7,11 +7,13 @@ public class Q5 {
 
         try {
             int lignes = Integer.parseInt(args[0]);
-            for (int ligneActuelle = 1; ligneActuelle <= lignes; ligneActuelle++) {
-                System.out.println("*".repeat(ligneActuelle)); // Affiche les étoiles en répétant la chaîne
+            for (int ligneActuelle = lignes; ligneActuelle > 0; ligneActuelle--) {
+                System.out.println("*".repeat(ligneActuelle)); // Affiche les étoiles pour la ligne actuelle
             }
         } catch (NumberFormatException ex) {
             System.out.println("Erreur : Le paramètre fourni n'est pas un entier valide.");
         }
     }
+}
+
 }
