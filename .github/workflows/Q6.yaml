@@ -17,13 +17,14 @@ jobs:
       - name: Créer un fichier Q6_archive_date.txt avec des informations
         run: |
           DATE=$(date '+%d-%m-%Y-%H%M%S')  # Date au format JJ-MM-AAAA-HHMMSS
-          FILENAME="Q6_archive_${DATE}.txt"
+          export FILENAME="Q6_archive_${DATE}.txt"  # Exporter pour usage ultérieur
           echo "Nom et Prénom : Arthur LECOMTE" > $FILENAME
           echo "" >> $FILENAME
           cat Q6.java >> $FILENAME
           echo "" >> $FILENAME
           echo "Taille (nombre de caractères) : $(wc -c < Q6.java)" >> $FILENAME
           echo "Nombre de lignes : $(wc -l < Q6.java)" >> $FILENAME
+          echo "Fichier créé : $FILENAME"
 
       - name: Comparer avec le fichier précédent
         run: |
@@ -32,8 +33,10 @@ jobs:
           echo "Fichier précédent : $LATEST_FILE"
           echo "Nouveau fichier : $FILENAME"
           
-          # Si un fichier précédent existe, comparer
-          if [ -f "$LATEST_FILE" ]; then
+          # Vérification de l'existence des fichiers
+          if [ -z "$FILENAME" ]; then
+            echo "Erreur : Le nouveau fichier n'a pas été correctement créé." > Q6_différences.txt
+          elif [ -f "$LATEST_FILE" ]; then
             diff -u "$LATEST_FILE" "$FILENAME" > Q6_différences.txt || true
           else
             echo "Aucune comparaison possible : aucun fichier précédent trouvé." > Q6_différences.txt
