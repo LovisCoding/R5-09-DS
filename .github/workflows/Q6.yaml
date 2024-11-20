@@ -1,4 +1,4 @@
-name: Archive Q6.java avec Date et différences
+name: Archive Q6.java and Track Differences
 
 on:
   push:
@@ -14,22 +14,27 @@ jobs:
       - name: Récupérer le dépôt
         uses: actions/checkout@v3
 
-      - name: Créer un fichier Q6_archive_date.txt avec la date et des informations
+      - name: Créer un fichier Q6_archive_date.txt avec des informations
         run: |
           DATE=$(date '+%d-%m-%Y-%H%M%S')  # Date au format JJ-MM-AAAA-HHMMSS
           FILENAME="Q6_archive_${DATE}.txt"
-          echo "Nom et Prénom : LECOMTE Arthur" > $FILENAME
+          echo "Nom et Prénom : Arthur LECOMTE" > $FILENAME
           echo "" >> $FILENAME
           cat Q6.java >> $FILENAME
           echo "" >> $FILENAME
           echo "Taille (nombre de caractères) : $(wc -c < Q6.java)" >> $FILENAME
           echo "Nombre de lignes : $(wc -l < Q6.java)" >> $FILENAME
 
-      - name: Comparer avec le dernier fichier Q6_archive
+      - name: Comparer avec le fichier précédent
         run: |
-          LATEST_FILE=$(ls -t Q6_archive_*.txt | head -n 2 | tail -n 1)  # Deuxième dernier fichier
+          # Identifier le fichier précédent
+          LATEST_FILE=$(ls -t Q6_archive_*.txt 2>/dev/null | head -n 2 | tail -n 1)
+          echo "Fichier précédent : $LATEST_FILE"
+          echo "Nouveau fichier : $FILENAME"
+          
+          # Si un fichier précédent existe, comparer
           if [ -f "$LATEST_FILE" ]; then
-            diff "$LATEST_FILE" "Q6_archive_${DATE}.txt" > Q6_différences.txt || true
+            diff -u "$LATEST_FILE" "$FILENAME" > Q6_différences.txt || true
           else
             echo "Aucune comparaison possible : aucun fichier précédent trouvé." > Q6_différences.txt
           fi
