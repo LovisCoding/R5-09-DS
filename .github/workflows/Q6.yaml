@@ -17,24 +17,28 @@ jobs:
       - name: Créer un fichier Q6_archive_date.txt avec des informations
         run: |
           DATE=$(date '+%d-%m-%Y-%H%M%S')  # Date au format JJ-MM-AAAA-HHMMSS
-          export FILENAME="Q6_archive_${DATE}.txt"  # Exporter pour usage ultérieur
-          echo "Nom et Prénom : Arthur LECOMTE" > $FILENAME
-          echo "" >> $FILENAME
-          cat Q6.java >> $FILENAME
-          echo "" >> $FILENAME
-          echo "Taille (nombre de caractères) : $(wc -c < Q6.java)" >> $FILENAME
-          echo "Nombre de lignes : $(wc -l < Q6.java)" >> $FILENAME
+          FILENAME="Q6_archive_${DATE}.txt"  # Nom dynamique pour le fichier
+          echo "Nom et Prénom : Arthur LECOMTE" > "$FILENAME"
+          echo "" >> "$FILENAME"
+          cat Q6.java >> "$FILENAME"
+          echo "" >> "$FILENAME"
+          echo "Taille (nombre de caractères) : $(wc -c < Q6.java)" >> "$FILENAME"
+          echo "Nombre de lignes : $(wc -l < Q6.java)" >> "$FILENAME"
+          echo "$FILENAME" > .current_filename.txt  # Stocker le nom pour l'utiliser plus tard
           echo "Fichier créé : $FILENAME"
 
       - name: Comparer avec le fichier précédent
         run: |
+          # Récupérer le nom du fichier nouvellement créé
+          FILENAME=$(cat .current_filename.txt)
+          
           # Identifier le fichier précédent
           LATEST_FILE=$(ls -t Q6_archive_*.txt 2>/dev/null | head -n 2 | tail -n 1)
           echo "Fichier précédent : $LATEST_FILE"
           echo "Nouveau fichier : $FILENAME"
           
-          # Vérification de l'existence des fichiers
-          if [ -z "$FILENAME" ]; then
+          # Vérifier l'existence des fichiers
+          if [ -z "$FILENAME" ] || [ ! -f "$FILENAME" ]; then
             echo "Erreur : Le nouveau fichier n'a pas été correctement créé." > Q6_différences.txt
           elif [ -f "$LATEST_FILE" ]; then
             diff -u "$LATEST_FILE" "$FILENAME" > Q6_différences.txt || true
