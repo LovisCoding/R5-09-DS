@@ -3,7 +3,7 @@ name: Archive Q3.java
 on:
   push:
     paths:
-      - Q3.java  # Le workflow se déclenche uniquement si le fichier Q3.java est modifié ou ajouté
+      - java/Q3.java  # Le workflow se déclenche uniquement si le fichier Q3.java est modifié ou ajouté
 
 jobs:
   archive-q3:
@@ -14,11 +14,12 @@ jobs:
       - name: Récupérer le dépôt
         uses: actions/checkout@v3
 
-      - name: Créer Q3_archive_java.txt
+      - name: Créer archives/Q3_archive_java.txt
         run: |
-          echo "Nom et Prénom : LECOMTE Arthur" > Q3_archive_java.txt
-          echo "" >> Q3_archive_java.txt
-          cat Q3.java >> Q3_archive_java.txt
+          mkdir -p archives
+          echo "Nom et Prénom : LECOMTE Arthur" > archives/Q3_archive_java.txt
+          echo "" >> archives/Q3_archive_java.txt
+          cat java/Q3.java >> archives/Q3_archive_java.txt
 
       - name: Ajouter et pousser les changements
         env:
@@ -26,6 +27,6 @@ jobs:
         run: |
           git config --global user.name "GitHub Actions"
           git config --global user.email "actions@github.com"
-          git add Q3_archive_java.txt
-          git commit -m "Ajout de Q3_archive_java.txt avec Q3.java et nom"
+          git add archives/Q3_archive_java.txt
+          git commit -m "Ajout de archives/Q3_archive_java.txt avec Q3.java et nom"
           git push origin HEAD

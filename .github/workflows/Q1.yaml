@@ -14,11 +14,10 @@ jobs:
       - name: Récupérer le dépôt
         uses: actions/checkout@v3
 
-      - name: Copier README.md vers Q1_archive_README.md
-        run: cp README.md Q1_archive_README.md
-
-      - name: Récupérer les dernières modifications du dépôt distant
-        run: git pull origin HEAD
+      - name: Copier README.md vers archives/Q1_archive_README.md
+        run: |
+          mkdir -p archives
+          cp README.md archives/Q1_archive_README.md
 
       - name: Ajouter et pousser les changements
         env:
@@ -26,6 +25,6 @@ jobs:
         run: |
           git config --global user.name "GitHub Actions"
           git config --global user.email "actions@github.com"
-          git add Q1_archive_README.md
-          git commit -m "Ajout de Q1_archive_README.md"
+          git add archives/Q1_archive_README.md
+          git commit -m "Ajout de archives/Q1_archive_README.md"
           git push origin HEAD

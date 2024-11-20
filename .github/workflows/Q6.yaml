@@ -3,7 +3,7 @@ name: Archive Q6.java and Track Differences
 on:
   push:
     paths:
-      - Q6.java  # Le workflow se déclenche uniquement si Q6.java est modifié ou ajouté
+      - java/Q6.java  # Le workflow se déclenche uniquement si le fichier Q6.java est modifié ou ajouté
 
 jobs:
   archive-q6:
@@ -14,36 +14,32 @@ jobs:
       - name: Récupérer le dépôt
         uses: actions/checkout@v3
 
-      - name: Créer un fichier Q6_archive_date.txt avec des informations
+      - name: Créer un fichier archives/Q6_archive_date.txt avec des informations
         run: |
+          mkdir -p archives
           DATE=$(date '+%d-%m-%Y-%H%M%S')  # Date au format JJ-MM-AAAA-HHMMSS
-          FILENAME="Q6_archive_${DATE}.txt"  # Nom dynamique pour le fichier
+          FILENAME="archives/Q6_archive_${DATE}.txt"
           echo "Nom et Prénom : Arthur LECOMTE" > "$FILENAME"
           echo "" >> "$FILENAME"
-          cat Q6.java >> "$FILENAME"
+          cat java/Q6.java >> "$FILENAME"
           echo "" >> "$FILENAME"
-          echo "Taille (nombre de caractères) : $(wc -c < Q6.java)" >> "$FILENAME"
-          echo "Nombre de lignes : $(wc -l < Q6.java)" >> "$FILENAME"
+          echo "Taille (nombre de caractères) : $(wc -c < java/Q6.java)" >> "$FILENAME"
+          echo "Nombre de lignes : $(wc -l < java/Q6.java)" >> "$FILENAME"
           echo "$FILENAME" > .current_filename.txt  # Stocker le nom pour l'utiliser plus tard
-          echo "Fichier créé : $FILENAME"
 
       - name: Comparer avec le fichier précédent
         run: |
-          # Récupérer le nom du fichier nouvellement créé
+          LATEST_FILE=$(ls -t archives/Q6_archive_*.txt 2>/dev/null | head -n 2 | tail -n 1)
           FILENAME=$(cat .current_filename.txt)
-          
-          # Identifier le fichier précédent
-          LATEST_FILE=$(ls -t Q6_archive_*.txt 2>/dev/null | head -n 2 | tail -n 1)
           echo "Fichier précédent : $LATEST_FILE"
           echo "Nouveau fichier : $FILENAME"
-          
-          # Vérifier l'existence des fichiers
+
           if [ -z "$FILENAME" ] || [ ! -f "$FILENAME" ]; then
-            echo "Erreur : Le nouveau fichier n'a pas été correctement créé." > Q6_différences.txt
+            echo "Erreur : Le nouveau fichier n'a pas été correctement créé." > archives/Q6_différences.txt
           elif [ -f "$LATEST_FILE" ]; then
-            diff -u "$LATEST_FILE" "$FILENAME" > Q6_différences.txt || true
+            diff -u "$LATEST_FILE" "$FILENAME" > archives/Q6_différences.txt || true
           else
-            echo "Aucune comparaison possible : aucun fichier précédent trouvé." > Q6_différences.txt
+            echo "Aucune comparaison possible : aucun fichier précédent trouvé." > archives/Q6_différences.txt
           fi
 
       - name: Ajouter et pousser les fichiers
@@ -52,6 +48,6 @@ jobs:
         run: |
           git config --global user.name "GitHub Actions"
           git config --global user.email "actions@github.com"
-          git add Q6_archive_*.txt Q6_différences.txt
-          git commit -m "Ajout de Q6_archive_DATE et Q6_différences.txt avec nom et infos"
+          git add archives/Q6_archive_*.txt archives/Q6_différences.txt
+          git commit -m "Ajout de archives/Q6_archive_DATE et Q6_différences.txt avec nom et infos"
           git push origin HEAD

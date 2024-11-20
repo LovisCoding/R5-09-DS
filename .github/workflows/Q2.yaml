@@ -14,24 +14,20 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Pull derniers changements
+      - name: Generate archives/Q2_archive_README.md
         run: |
-          git fetch origin
-          git pull origin HEAD
+          mkdir -p archives
+          echo "Nom et Prénom : LECOMTE Arthur" > archives/Q2_archive_README.md
+          echo "Date et heure : $(date '+%d-%m-%Y %H:%M:%S')" >> archives/Q2_archive_README.md
+          echo "" >> archives/Q2_archive_README.md
+          cat README.md >> archives/Q2_archive_README.md
 
-      - name: Generate Q2_archive_README.md
-        run: |
-          echo "Nom et Prénom : LECOMTE Arthur" > Q2_archive_README.md
-          echo "Date et heure : $(date '+%d-%m-%Y %H:%M:%S')" >> Q2_archive_README.md
-          echo "" >> Q2_archive_README.md
-          cat README.md >> Q2_archive_README.md
-
-      - name: Commit et push les modifications
+      - name: Ajouter et pousser les modifications
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           git config --global user.name "GitHub Actions"
           git config --global user.email "actions@github.com"
-          git add Q2_archive_README.md
-          git commit -m "Ajout Q2_archive_README.md avec nom, date, et contenu du README"
+          git add archives/Q2_archive_README.md
+          git commit -m "Ajout archives/Q2_archive_README.md avec nom, date, et contenu du README"
           git push origin HEAD

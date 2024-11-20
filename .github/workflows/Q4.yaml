@@ -3,7 +3,7 @@ name: Archive Q4.java avec date dans le nom du fichier
 on:
   push:
     paths:
-      - Q4.java  # Le workflow se déclenche uniquement si le fichier Q4.java est modifié ou ajouté
+      - java/Q4.java  # Le workflow se déclenche uniquement si le fichier Q4.java est modifié ou ajouté
 
 jobs:
   archive-q4:
@@ -14,13 +14,14 @@ jobs:
       - name: Récupérer le dépôt
         uses: actions/checkout@v3
 
-      - name: Créer un fichier Q4_archive_date.txt avec la date
+      - name: Créer un fichier archives/Q4_archive_date.txt avec la date
         run: |
+          mkdir -p archives
           DATE=$(date '+%d-%m-%Y')  # Obtenir la date au format JJ-MM-AAAA
-          FILENAME="Q4_archive_${DATE}.txt"
+          FILENAME="archives/Q4_archive_${DATE}.txt"
           echo "Nom et Prénom : LECOMTE Arthur" > $FILENAME
           echo "" >> $FILENAME
-          cat Q4.java >> $FILENAME
+          cat java/Q4.java >> $FILENAME
 
       - name: Ajouter et pousser les changements
         env:
@@ -28,6 +29,6 @@ jobs:
         run: |
           git config --global user.name "GitHub Actions"
           git config --global user.email "actions@github.com"
-          git add Q4_archive_*.txt
-          git commit -m "Ajout de Q4_archive_DATE avec Q4.java et nom"
+          git add archives/Q4_archive_*.txt
+          git commit -m "Ajout de archives/Q4_archive_DATE avec Q4.java et nom"
           git push origin HEAD
