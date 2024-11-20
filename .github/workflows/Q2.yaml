@@ -1,9 +1,9 @@
-name: Ajout Nom, Date, et contenu du README à l'archive
+name: Create Q2 Archive README
 
 on:
   push:
     paths:
-      - README.md  # Le workflow se déclenche lorsqu'un changement est effectué sur README.md
+      - README.md  # Le workflow se déclenche uniquement si le fichier README.md est modifié
 
 jobs:
   generate-archive:
@@ -14,14 +14,19 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Create Q2_archive_README.md
+      - name: Pull derniers changements
+        run: |
+          git fetch origin
+          git pull origin HEAD
+
+      - name: Generate Q2_archive_README.md
         run: |
           echo "Nom et Prénom : LECOMTE Arthur" > Q2_archive_README.md
           echo "Date et heure : $(date '+%d-%m-%Y %H:%M:%S')" >> Q2_archive_README.md
           echo "" >> Q2_archive_README.md
           cat README.md >> Q2_archive_README.md
 
-      - name: Commit and push changes
+      - name: Commit et push les modifications
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
