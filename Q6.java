@@ -11,7 +11,7 @@ public class Q6 {
                 System.out.println("x".repeat(ligneActuelle)); // Affiche des 'x' pour la ligne actuelle
             }
         } catch (NumberFormatException ex) {
-            System.out.println("Erreur : Le paramètre fourni n'est pas un nombre entier valide.");
+            System.out.println("Erreur : Le paramètre fourni n'est pas un nombre entier valide ! .");
         }
     }
 }
